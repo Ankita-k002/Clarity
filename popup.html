@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clarity</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup-shell">
+      <header>
+        <div class="brand"><span>✦</span> Clarity</div>
+        <button id="openPlanner" class="open-planner" title="Open full planner">Open planner ↗</button>
+      </header>
+
+      <section class="popup-date" id="dateLabel"></section>
+
+      <form id="quickAdd" class="task-composer">
+        <label class="composer-label" for="taskTitle">Add a task</label>
+        <input id="taskTitle" maxlength="120" autocomplete="off" placeholder="What needs your attention?" aria-label="New task" required />
+        <button class="deadline-toggle" id="deadlineToggle" type="button">+ Add deadline</button>
+        <div class="deadline-fields hidden" id="deadlineFields">
+          <label>Due date<input id="taskDate" type="date" /></label>
+          <label>Deadline time<input id="taskTime" type="time" /></label>
+          <label style="grid-column: span 2;">Energy required
+            <select id="taskPriority" style="display: block; width: 100%; margin-top: 5px; padding: 7px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font-size: 10px;">
+              <option value="low">Light (Green)</option>
+              <option value="medium" selected>Steady (Orange)</option>
+              <option value="high">Deep focus (Red)</option>
+            </select>
+          </label>
+        </div>
+        <div class="composer-actions">
+          <button class="save-task" id="saveTask" type="submit">Save task <span>→</span></button>
+          <span id="saveStatus" role="status"></span>
+        </div>
+      </form>
+
+      <div class="reminder-strip">
+        <span>Timed: 1 hr alert when set 2+ hrs ahead; then 10 min.</span>
+        <button id="testNotification" type="button">Test notification</button>
+      </div>
+      <div id="notificationStatus" class="notification-status" role="status"></div>
+
+      <section class="plan" aria-label="Today’s tasks">
+        <div class="plan-heading">
+          <h2>Your tasks</h2>
+          <div class="plan-heading-right">
+            <span id="progress">0 / 0</span>
+            <button id="clearAllTasks" class="clear-btn" title="Clear all tasks">Clear all</button>
+          </div>
+        </div>
+        <div id="taskList" class="task-list"></div>
+        <div id="empty" class="empty">No tasks yet. Add one above to see it here.</div>
+      </section>
+
+      <footer>
+        <span id="footerNote">Untimed tasks receive gentle reminders through today.</span>
+        <button id="refreshQuote" aria-label="Change encouragement" title="New inspiration">↻</button>
+      </footer>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

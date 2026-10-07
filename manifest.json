@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Clarity — Gentle Task Planner",
+  "version": "1.4.0",
+  "description": "A calm task planner with deadline and gentle daily reminders.",
+  "permissions": ["storage", "alarms", "notifications"],
+  "action": {
+    "default_title": "Clarity — today’s plan",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
