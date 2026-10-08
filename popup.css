@@ -1,75 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap');
+
 :root {
-  --paper: #0d1018;
-  --ink: #edf1fa;
-  --muted: #9ca8bb;
-  --line: #2a3241;
-  --sage: #192435;
-  --sage-dark: #b9caff;
-  --card: #141a27;
+  --paper: #0b0914;
+  --ink: #f4efff;
+  --muted: #9f8ebd;
+  --line: #2b1f42;
+  --sage: #201438;
+  --sage-dark: #b692ff;
+  --card: #140e24;
+  --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+body.theme-midnight {
+  --paper: #0b0914;
+  --ink: #f4efff;
+  --muted: #9f8ebd;
+  --line: #2b1f42;
+  --sage: #201438;
+  --sage-dark: #b692ff;
+  --card: #140e24;
 }
 body.theme-emerald {
-  --paper: #091712;
-  --ink: #ebf7f2;
-  --muted: #8cb8a5;
-  --line: #1e3d30;
-  --sage: #132e23;
-  --sage-dark: #a1e0c5;
-  --card: #10241c;
+  --paper: #06120c;
+  --ink: #edfcf5;
+  --muted: #7ebba4;
+  --line: #15382b;
+  --sage: #0f271e;
+  --sage-dark: #34d399;
+  --card: #0c1d15;
 }
-body.theme-amber {
-  --paper: #16110e;
-  --ink: #f7eee9;
-  --muted: #bda599;
-  --line: #3d2d24;
-  --sage: #2b1d15;
-  --sage-dark: #f0c2a8;
-  --card: #201713;
-}
-body.theme-nordic {
-  --paper: #0f172a;
-  --ink: #f1f5f9;
-  --muted: #94a3b8;
-  --line: #334155;
-  --sage: #1e293b;
-  --sage-dark: #93c5fd;
-  --card: #172033;
-}
-body.theme-graphite {
-  --paper: #121211;
-  --ink: #f2eee7;
-  --muted: #aaa69e;
-  --line: #363530;
-  --sage: #252820;
-  --sage-dark: #d7ddc1;
-  --card: #1a1a18;
+body.theme-cherry {
+  --paper: #14070a;
+  --ink: #ffebef;
+  --muted: #d4959f;
+  --line: #441820;
+  --sage: #2a0e13;
+  --sage-dark: #f87171;
+  --card: #1d0a0e;
 }
 body.theme-ocean {
-  --paper: #071723;
-  --ink: #e7f4fb;
-  --muted: #91adbd;
-  --line: #204253;
-  --sage: #123245;
-  --sage-dark: #a9d9ed;
-  --card: #0d2130;
+  --paper: #061019;
+  --ink: #eaf4fd;
+  --muted: #84afd3;
+  --line: #17324c;
+  --sage: #0d2134;
+  --sage-dark: #38bdf8;
+  --card: #0b1a29;
 }
-body.theme-plum {
-  --paper: #19111d;
-  --ink: #f8ecf6;
-  --muted: #b9a0b4;
-  --line: #493648;
-  --sage: #37283d;
-  --sage-dark: #e8bce0;
-  --card: #241827;
+body.theme-autumn {
+  --paper: #fbf7f2;
+  --ink: #2b1d16;
+  --muted: #7e675b;
+  --line: #e9dbce;
+  --sage: #f5e9dd;
+  --sage-dark: #d97706;
+  --card: #ffffff;
+}
+body.theme-rose {
+  --paper: #fcf4f7;
+  --ink: #2f1722;
+  --muted: #876271;
+  --line: #edd5df;
+  --sage: #fce9f1;
+  --sage-dark: #ec4899;
+  --card: #ffffff;
+}
+body.theme-sage {
+  --paper: #f3f8f5;
+  --ink: #12291d;
+  --muted: #597a6a;
+  --line: #cbe3d4;
+  --sage: #e2f2e7;
+  --sage-dark: #10b981;
+  --card: #ffffff;
+}
+body.theme-linen {
+  --paper: #f9f7f2;
+  --ink: #26221c;
+  --muted: #797164;
+  --line: #e5decb;
+  --sage: #f0e9d9;
+  --sage-dark: #b45309;
+  --card: #ffffff;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 365px; background: var(--paper); color: var(--ink); font-family: Inter, Segoe UI, Arial, sans-serif; }
+body { margin: 0; min-width: 365px; background: var(--paper); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 .hidden { display: none !important; }
 .popup-shell { padding: 18px 18px 14px; }
 
 header { display: flex; align-items: center; justify-content: space-between; }
-.brand { font-family: Georgia, serif; font-weight: 700; letter-spacing: -.7px; font-size: 19px; }
-.brand span { color: var(--sage-dark); font-family: Arial, sans-serif; font-size: 16px; margin-right: 4px; }
+.brand { font-family: var(--font-serif); font-weight: 700; letter-spacing: -.5px; font-size: 32px; }
+.brand span { color: var(--sage-dark); font-family: sans-serif; font-size: 24px; margin-right: 4px; }
 
 button { cursor: pointer; font: inherit; }
 .open-planner { border: 0; background: transparent; color: var(--sage-dark); font-size: 11px; font-weight: 700; padding: 6px 0; }
@@ -99,7 +121,7 @@ button { cursor: pointer; font: inherit; }
 
 .plan { margin-top: 20px; }
 .plan-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
-.plan-heading h2 { margin: 0; font-family: Georgia, serif; font-size: 17px; letter-spacing: -.4px; }
+.plan-heading h2 { margin: 0; font-family: var(--font-serif); font-size: 18px; letter-spacing: -.4px; }
 .plan-heading-right { display: flex; align-items: center; gap: 8px; }
 .plan-heading-right span { color: var(--muted); font-family: Consolas, monospace; font-size: 10px; }
 .clear-btn { border: 0; background: transparent; color: #b86060; font-size: 10px; font-weight: 700; padding: 2px 4px; border-radius: 4px; }

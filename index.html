@@ -1,58 +1,71 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0d1018" />
-    <title>Clarity — Gentle Task Planner</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="#" aria-label="Clarity home"><span class="brand-mark">✦</span> Clarity</a>
-        <nav class="view-tabs" aria-label="Planner views">
-          <button class="view-tab active" data-view="today">Today</button>
-          <button class="view-tab" data-view="upcoming">Upcoming</button>
-          <button class="view-tab" data-view="all">All tasks</button>
-        </nav>
-        <div class="header-actions">
-          <button class="add-button" id="openTaskModal"><span>+</span> Add task</button>
-          <button class="icon-button settings-btn" id="themeButton" aria-label="Themes and inspiration" title="Themes & inspiration">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-          </button>
-        </div>
-      </header>
 
-      <section class="hero" aria-labelledby="page-title">
-        <div class="hero-main">
-          <div class="hero-header-line">
-            <p class="eyebrow" id="dateLabel"></p>
-            <span class="week-stat-pill" id="heroWeekPill" title="Tasks due this week">
-              ⚡ <span id="weekCount">0</span> tasks due this week
-            </span>
-          </div>
-          <h1 id="page-title">Make room for <em>what matters.</em></h1>
-          <p class="hero-copy" id="greetingCopy">You don't need to do everything. Just focus on what's needed to be done for your future self.</p>
-          
-          <!-- Prominent Main Action Bar in Center of Screen -->
-          <div class="hero-action-bar">
-            <form id="heroQuickAdd" class="hero-quick-form">
-              <span class="quick-icon">✦</span>
-              <input id="heroTaskInput" placeholder="What would you like to accomplish today?" autocomplete="off" aria-label="Add task title" required />
-              <button type="submit" class="hero-quick-btn"><span>+</span> Add Task</button>
-            </form>
-            <button class="hero-modal-btn" id="heroOpenModal" type="button" title="Add task with date & reminder">
-              <span>🗓</span> Add with deadline
-            </button>
-          </div>
-        </div>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d1018" />
+  <title>Clarity — Gentle Task Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Abel&family=Caveat:wght@600;700&family=Zeyada&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@600;700;800&family=Newsreader:ital,wght@0,500;0,600;1,400;1,600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-      <section class="dashboard">
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Clarity home"><span class="brand-mark">✦</span> Clarity</a>
+      <nav class="view-tabs" aria-label="Planner views">
+        <button class="view-tab active" data-view="today">Today</button>
+        <button class="view-tab" data-view="upcoming">Upcoming</button>
+        <button class="view-tab" data-view="all">All tasks</button>
+      </nav>
+      <div class="header-actions">
+        <span class="streak-pill header-streak-pill" id="streakPill" title="Daily completion streak">
+          🔥 <span id="streakCount">0</span> day streak
+        </span>
+        <button class="icon-button settings-btn" id="themeButton" aria-label="Themes and inspiration"
+          title="Themes & inspiration">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+            </path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <div class="main-column">
+        <section class="hero" aria-labelledby="page-title">
+          <div class="hero-main">
+            <div class="hero-header-line">
+              <p class="eyebrow" id="dateLabel"></p>
+            </div>
+            <h1 id="page-title">Make room for <br /><em>what matters.</em></h1>
+            <p class="hero-copy" id="greetingCopy">You don't need to do everything. Just focus on what's needed to be
+              done for your future self.</p>
+
+            <!-- Prominent Main Action Bar in Center of Screen -->
+            <div class="hero-action-bar">
+              <form id="heroQuickAdd" class="hero-quick-form">
+                <span class="quick-icon">✦</span>
+                <input id="heroTaskInput" placeholder="What would you like to accomplish today?" autocomplete="off"
+                  aria-label="Add task title" required />
+                <button type="submit" class="hero-quick-btn"><span>+</span> Add Task</button>
+              </form>
+              <button class="hero-modal-btn" id="heroOpenModal" type="button" title="Add task with date & reminder">
+                <span>🗓</span> Add with deadline
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section class="tasks-panel" aria-label="Your tasks">
           <div class="section-heading">
             <div>
@@ -76,138 +89,257 @@
             <button class="soft-button" id="emptyAdd">+ Add your first task</button>
           </div>
         </section>
+      </div>
 
-        <aside class="side-panel">
-          <!-- 1. Dedicated Image Display Box (Top) -->
-          <section class="image-box-card" id="imageBoxCard">
-            <div class="empty-image-prompt" id="emptyImagePrompt">
-              <div class="dropzone-icon">🖼️</div>
-              <div class="dropzone-text">
-                <strong>Add an image of your choice</strong>
-                <span>Click to upload an inspiration picture</span>
-              </div>
+      <aside class="side-panel">
+        <!-- 1. Dedicated Image Display Box (Top) -->
+        <section class="image-box-card" id="imageBoxCard">
+          <div class="empty-image-prompt" id="emptyImagePrompt">
+            <div class="dropzone-icon">🖼️</div>
+            <div class="dropzone-text">
+              <strong>Add an image of your choice</strong>
+              <span>Click to upload an inspiration picture</span>
             </div>
-            <div class="active-image-view hidden" id="activeImageView">
-              <img id="sideImageDisplay" class="side-image-display" alt="Inspiration image" />
-              <div class="image-card-actions">
-                <button type="button" class="mini-card-btn" id="sideCardImageChange">Change</button>
-                <button type="button" class="mini-card-btn danger" id="sideCardImageRemove">Remove</button>
-              </div>
-            </div>
-            <input type="file" id="sideCardImageInput" accept="image/*" style="display: none;" />
-          </section>
-
-          <!-- 2. Quote & Motivation Card (Second) -->
-          <section class="quote-card" id="inspirationCard">
-            <div class="quote-content">
-              <div class="quote-header-row">
-                <span class="streak-pill" id="streakPill" title="Daily completion streak">
-                  🔥 <span id="streakCount">0</span> day streak
-                </span>
-                <span class="inspiration-tag">Daily Motivation</span>
-              </div>
-              <p id="quoteText">Almost everything will work again if you unplug it for a few minutes — including you.</p>
-              <span class="quote-author" id="quoteAuthor">— Anne Lamott</span>
-            </div>
-          </section>
-
-          <!-- 3. Enhanced Calendar Card (Third) -->
-          <section class="calendar-card" aria-labelledby="calendarTitle">
-            <div class="calendar-header">
-              <div>
-                <h2 id="calendarTitle">Calendar</h2>
-                <p class="calendar-month" id="calendarMonth"></p>
-              </div>
-              <div class="calendar-controls">
-                <div class="view-toggle">
-                  <button class="cal-tab active" id="calViewMonth">Month</button>
-                  <button class="cal-tab" id="calViewWeek">Week</button>
-                </div>
-                <div class="nav-buttons">
-                  <button class="mini-button" id="prevMonth" aria-label="Previous">‹</button>
-                  <button class="mini-button" id="nextMonth" aria-label="Next">›</button>
-                </div>
-              </div>
-            </div>
-            <div class="weekdays" aria-hidden="true">
-              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-          </section>
-        </aside>
-      </section>
-    </main>
-
-    <dialog class="settings-dialog" id="settingsDialog" aria-labelledby="settingsTitle">
-      <form id="settingsForm">
-        <div class="dialog-header">
-          <div>
-            <p class="eyebrow">Make it yours</p>
-            <h2 id="settingsTitle">Themes & inspiration</h2>
           </div>
-          <button class="icon-button close-button" type="button" id="closeSettings" aria-label="Close">×</button>
-        </div>
-        <p class="settings-note">Choose a refined palette for your workspace.</p>
-        <div class="theme-choices" role="radiogroup" aria-label="Theme options">
-          <div class="theme-section-title">Dark Themes</div>
-          <button class="theme-choice midnight" data-theme="midnight" type="button"><span></span><b>Midnight</b><small>Deep violet & silver</small></button>
-          <button class="theme-choice emerald" data-theme="emerald" type="button"><span></span><b>Emerald</b><small>Forest & emerald</small></button>
-          <button class="theme-choice cherry" data-theme="cherry" type="button"><span></span><b>Cherry Red</b><small>Crimson & rose</small></button>
-          <button class="theme-choice ocean" data-theme="ocean" type="button"><span></span><b>Ocean</b><small>Navy & cobalt</small></button>
-          
-          <div class="theme-section-title">Light Themes</div>
-          <button class="theme-choice autumn" data-theme="autumn" type="button"><span></span><b>Autumn Brown</b><small>Terracotta & amber</small></button>
-          <button class="theme-choice rose" data-theme="rose" type="button"><span></span><b>Rose Pink</b><small>Blush & quartz</small></button>
-          <button class="theme-choice sage" data-theme="sage" type="button"><span></span><b>Sage Mint</b><small>Fresh mint & pine</small></button>
-          <button class="theme-choice linen" data-theme="linen" type="button"><span></span><b>Cream Linen</b><small>Warm sand & espresso</small></button>
-        </div>
-        <div class="settings-divider"></div>
-        <label class="field-label" for="inspirationText">Your personal reminder</label>
-        <textarea id="inspirationText" maxlength="360" placeholder="A kind note, a goal, a line that brings you back…"></textarea>
-        <label class="field-label" for="inspirationUpload">Your inspiration image <span>(optional, max 4 MB)</span></label>
-        <input id="inspirationUpload" type="file" accept="image/*" />
-        <div class="image-preview hidden" id="imagePreview"><img id="previewImage" alt="Selected inspiration preview" /><button type="button" id="removeImage">Remove image</button></div>
-        <p class="upload-message" id="uploadMessage" role="status"></p>
-        <div class="dialog-footer"><button class="text-button" type="button" id="cancelSettings">Cancel</button><button class="add-button" type="submit">Save preferences <span>→</span></button></div>
-      </form>
-    </dialog>
-
-    <dialog class="task-dialog" id="taskDialog" aria-labelledby="dialogTitle">
-      <form id="taskForm">
-        <div class="dialog-header"><div><p class="eyebrow">A small promise</p><h2 id="dialogTitle">Add a task</h2></div><button class="icon-button close-button" type="button" id="closeTaskModal" aria-label="Close">×</button></div>
-        <label class="field-label" for="taskTitle">What would you like to remember?</label>
-        <input id="taskTitle" name="title" autocomplete="off" placeholder="e.g. Send the project draft" required maxlength="120" />
-        <div class="form-grid">
-          <div><label class="field-label" for="taskDate">When is it due?</label><input id="taskDate" name="date" type="date" /></div>
-          <div><label class="field-label" for="taskTime">At what time?</label><input id="taskTime" name="time" type="time" /></div>
-        </div>
-        <div class="form-grid">
-          <div><label class="field-label" for="taskPriority">Energy it needs</label><select id="taskPriority" name="priority"><option value="low">Light</option><option value="medium" selected>Steady</option><option value="high">Deep focus</option></select></div>
-          <div><label class="field-label" for="taskRepeat">Show it again</label><select id="taskRepeat" name="repeat"><option value="none">Just once</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option></select></div>
-        </div>
-        <label class="focus-choice"><input id="taskFocus" name="focus" type="checkbox" /><span class="custom-check">✓</span><span>Make this my focus</span></label>
-        <div class="dialog-footer"><button class="text-button" type="button" id="cancelTask">Cancel</button><button class="add-button" type="submit">Save task <span>→</span></button></div>
-      </form>
-    </dialog>
-
-    <template id="taskTemplate">
-      <article class="task-item">
-        <button class="check-button" aria-label="Mark task complete"><span>✓</span></button>
-        <div class="task-main">
-          <div class="task-title-line">
-            <h3 class="task-title"></h3>
-            <span class="focus-pill hidden">Focus</span>
-            <span class="priority-pill"></span>
+          <div class="active-image-view hidden" id="activeImageView">
+            <img id="sideImageDisplay" class="side-image-display" alt="Inspiration image" />
+            <div class="image-card-actions">
+              <button type="button" class="mini-card-btn" id="sideCardImageChange">Change</button>
+              <button type="button" class="mini-card-btn danger" id="sideCardImageRemove">Remove</button>
+            </div>
           </div>
-          <p class="task-meta"></p>
-        </div>
-        <div class="task-actions">
-          <button class="star-button" aria-label="Make focus" title="Toggle focus anchor">☆</button>
-          <button class="more-button" aria-label="Delete task" title="Delete task">×</button>
-        </div>
-      </article>
-    </template>
+          <input type="file" id="sideCardImageInput" accept="image/*" style="display: none;" />
+        </section>
 
-    <script src="app.js"></script>
-  </body>
+        <!-- 2. Quote & Motivation Card (Second) -->
+        <section class="quote-card" id="inspirationCard">
+          <div class="quote-content">
+            <div class="quote-header-row">
+              <span class="inspiration-tag">Daily Motivation</span>
+            </div>
+            <p id="quoteText">Almost everything will work again if you unplug it for a few minutes — including you.</p>
+            <span class="quote-author" id="quoteAuthor">— Anne Lamott</span>
+          </div>
+        </section>
+
+        <!-- 3. Enhanced Calendar Card (Third) -->
+        <section class="calendar-card" aria-labelledby="calendarTitle">
+          <div class="calendar-header">
+            <div>
+              <h2 id="calendarTitle">Calendar</h2>
+              <p class="calendar-month" id="calendarMonth"></p>
+            </div>
+            <div class="calendar-controls">
+              <div class="view-toggle">
+                <button class="cal-tab active" id="calViewMonth">Month</button>
+                <button class="cal-tab" id="calViewWeek">Week</button>
+              </div>
+              <div class="nav-buttons">
+                <button class="mini-button" id="prevMonth" aria-label="Previous">‹</button>
+                <button class="mini-button" id="nextMonth" aria-label="Next">›</button>
+              </div>
+            </div>
+          </div>
+          <div class="weekdays" aria-hidden="true">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+
+        <!-- 4. Monthly Analytics Card (Bottom of Side Panel) -->
+        <section class="analytics-card" id="analyticsCard" aria-labelledby="analyticsTitle">
+          <div class="analytics-header">
+            <div>
+              <p class="analytics-eyebrow">Monthly Insights</p>
+              <h2 id="analyticsTitle">Monthly Analytics</h2>
+            </div>
+            <span class="analytics-month-tag" id="analyticsMonthName">October</span>
+          </div>
+          <div class="analytics-stats-grid">
+            <div class="analytics-stat-box">
+              <span class="stat-number" id="analyticsTotalTasks">0</span>
+              <span class="stat-label">Total Tasks</span>
+            </div>
+            <div class="analytics-stat-box">
+              <span class="stat-number" id="analyticsCompletedTasks">0</span>
+              <span class="stat-label">Completed</span>
+            </div>
+            <div class="analytics-stat-box">
+              <span class="stat-number" id="analyticsEfficiency">0%</span>
+              <span class="stat-label">Efficiency</span>
+            </div>
+          </div>
+          <div class="analytics-progress-bar">
+            <div class="analytics-progress-fill" id="analyticsEfficiencyFill" style="width: 0%;"></div>
+          </div>
+          <div class="analytics-energy-breakdown">
+            <span class="energy-tag low" id="analyticsEnergyLow" title="Light Tasks">🟢 0 Light</span>
+            <span class="energy-tag medium" id="analyticsEnergyMedium" title="Steady Tasks">🟠 0 Steady</span>
+            <span class="energy-tag high" id="analyticsEnergyHigh" title="Deep Focus Tasks">🔴 0 Deep</span>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <dialog class="settings-dialog" id="settingsDialog" aria-labelledby="settingsTitle">
+    <form id="settingsForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Make it yours</p>
+          <h2 id="settingsTitle">Preferences & Style</h2>
+        </div>
+        <button class="icon-button close-button" type="button" id="closeSettings" aria-label="Close">×</button>
+      </div>
+
+      <!-- 1. Personal Reminder Text Area (First / Top Element) -->
+      <div class="settings-section">
+        <label class="field-label" for="inspirationText">Your Personal Reminder</label>
+        <textarea id="inspirationText" maxlength="360" placeholder="Write your custom reminder note here…"></textarea>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <!-- 2. Collapsible Themes Accordion Toggle -->
+      <details class="settings-accordion" open>
+        <summary class="accordion-summary">
+          <span class="summary-title">🎨 Workspace Themes</span>
+          <span class="summary-icon">▾</span>
+        </summary>
+        <div class="accordion-content">
+          <div class="theme-choices" role="radiogroup" aria-label="Theme options">
+            <div class="theme-section-title">Dark Themes</div>
+            <button class="theme-choice midnight" data-theme="midnight" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Midnight</b><small>Deep violet & silver</small></div>
+            </button>
+            <button class="theme-choice emerald" data-theme="emerald" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Emerald</b><small>Forest & emerald</small></div>
+            </button>
+            <button class="theme-choice cherry" data-theme="cherry" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Cherry Red</b><small>Crimson & rose</small></div>
+            </button>
+            <button class="theme-choice ocean" data-theme="ocean" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Ocean</b><small>Navy & cobalt</small></div>
+            </button>
+
+            <div class="theme-section-title">Light Themes</div>
+            <button class="theme-choice autumn" data-theme="autumn" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Autumn Brown</b><small>Rich terracotta & rust</small></div>
+            </button>
+            <button class="theme-choice rose" data-theme="rose" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Rose Pink</b><small>Blush & quartz</small></div>
+            </button>
+            <button class="theme-choice sage" data-theme="sage" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Sage Mint</b><small>Fresh mint & pine</small></div>
+            </button>
+            <button class="theme-choice linen" data-theme="linen" type="button">
+              <span></span>
+              <div class="theme-choice-text"><b>Cream Linen</b><small>Oat cream & espresso</small></div>
+            </button>
+          </div>
+        </div>
+      </details>
+
+      <div class="settings-divider"></div>
+
+      <!-- 3. Collapsible Typography Accordion Toggle -->
+      <details class="settings-accordion" open>
+        <summary class="accordion-summary">
+          <span class="summary-title">🔤 Typography Styles</span>
+          <span class="summary-icon">▾</span>
+        </summary>
+        <div class="accordion-content">
+          <div class="font-choices" role="radiogroup" aria-label="Font options">
+            <button class="font-choice font-preview-caveat" data-font="caveat" type="button">
+              <b>Caveat</b><small>Expressive handwritten font</small>
+            </button>
+            <button class="font-choice font-preview-zeyada" data-font="zeyada" type="button">
+              <b>Zeyada</b><small>Elegant cursive handwriting</small>
+            </button>
+            <button class="font-choice font-preview-abel" data-font="abel" type="button">
+              <b>Abel</b><small>Modern minimalist sans</small>
+            </button>
+            <button class="font-choice font-preview-creative" data-font="creative" type="button">
+              <b>Space Grotesk & Syne</b><small>Modern creative sans</small>
+            </button>
+            <button class="font-choice font-preview-classic" data-font="classic" type="button">
+              <b>Newsreader & Jakarta</b><small>Literary publishing serif</small>
+            </button>
+          </div>
+        </div>
+      </details>
+
+      <div class="dialog-footer">
+        <button class="text-button cancel-btn" type="button" id="cancelSettings">Cancel</button>
+        <button class="add-button" type="submit">Save preferences <span>→</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="task-dialog" id="taskDialog" aria-labelledby="dialogTitle">
+    <form id="taskForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">A small promise</p>
+          <h2 id="dialogTitle">Add a task</h2>
+        </div><button class="icon-button close-button" type="button" id="closeTaskModal" aria-label="Close">×</button>
+      </div>
+      <label class="field-label" for="taskTitle">What would you like to remember?</label>
+      <input id="taskTitle" name="title" autocomplete="off" placeholder="e.g. Send the project draft" required
+        maxlength="120" />
+      <div class="form-grid">
+        <div><label class="field-label" for="taskDate">When is it due?</label><input id="taskDate" name="date"
+            type="date" /></div>
+        <div><label class="field-label" for="taskTime">At what time?</label><input id="taskTime" name="time"
+            type="time" /></div>
+      </div>
+      <div class="form-grid">
+        <div><label class="field-label" for="taskPriority">Energy it needs</label><select id="taskPriority"
+            name="priority">
+            <option value="low">Light</option>
+            <option value="medium" selected>Steady</option>
+            <option value="high">Deep focus</option>
+          </select></div>
+        <div><label class="field-label" for="taskRepeat">Show it again</label><select id="taskRepeat" name="repeat">
+            <option value="none">Just once</option>
+            <option value="daily">Every day</option>
+            <option value="weekly">Every week</option>
+            <option value="monthly">Every month</option>
+          </select></div>
+      </div>
+      <label class="focus-choice"><input id="taskFocus" name="focus" type="checkbox" /><span
+          class="custom-check">✓</span><span>Make this my focus</span></label>
+      <div class="dialog-footer"><button class="text-button" type="button" id="cancelTask">Cancel</button><button
+          class="add-button" type="submit">Save task <span>→</span></button></div>
+    </form>
+  </dialog>
+
+  <template id="taskTemplate">
+    <article class="task-item">
+      <button class="check-button" aria-label="Mark task complete"><span>✓</span></button>
+      <div class="task-main">
+        <div class="task-title-line">
+          <h3 class="task-title"></h3>
+          <span class="focus-pill hidden">Focus</span>
+          <span class="priority-pill"></span>
+        </div>
+        <p class="task-meta"></p>
+      </div>
+      <div class="task-actions">
+        <button class="star-button" aria-label="Make focus" title="Toggle focus anchor">☆</button>
+        <button class="more-button" aria-label="Delete task" title="Delete task">×</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+
 </html>

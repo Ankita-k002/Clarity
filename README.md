@@ -1,6 +1,6 @@
 # ✦ Clarity — Personalized Gentle Task Planner
 
-> An offline-first **Chrome Extension & Web Application** designed to turn a crowded mind into planned tasks.
+> An offline-first **Chrome Extension & Web Application** designed to turn a crowded mind into calm, intentional, and planned tasks.
 
 [![Chrome Extension](https://img.shields.io/badge/Manifest-V3-blue.svg)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![Tech Stack](https://img.shields.io/badge/Stack-HTML5%20%7C%20CSS3%20%7C%20ES6%2B-green.svg)](#tech-stack)
@@ -11,7 +11,7 @@
 
 ## 📖 Overview & Personal Vision
 
-**Clarity** : I created this project out of a personal need for a distraction-free, custom made task planner that adapts to daily energy levels rather than overwhelming you with endless tasks in head that is left forgotten or lost due to procastination or laziness. 
+**Clarity** was created out of a personal need for a customizable task planner that adapts to daily energy levels rather than overwhelming you with endless task lists that end up forgotten or lost to procrastination.
 
 Instead of heavy project management software or complex multi-user apps, Clarity provides a simple yet elegant space right inside your browser — available instantly through a **Chrome Extension Popup** or as a **Full-Screen Browser Web App**.
 
@@ -19,63 +19,71 @@ Instead of heavy project management software or complex multi-user apps, Clarity
 
 ## 🤖 Human-in-the-Loop AI Development & Vibe Coding
 
-Clarity is a **vibe coded** project, crafted through continuous **Human-in-the-Loop AI Collaboration**. 
+Clarity is a **vibe-coded** project, crafted through continuous **Human-in-the-Loop AI Collaboration**. 
 
-I conceptualized the features, layout requirements, aesthetic and theme guidelines, and user experience workflows(tested out by myself to make it better with each check), while pairing with advanced AI tools (**Codex** & **Antigravity IDE**) to implement, refine, and debug the codebase step-by-step:
+I conceptualized the features, layout requirements, aesthetic guidelines, typography, and user experience workflows, while pairing with advanced AI tools (**Codex** at first, then rest with **Antigravity IDE**) to implement, refine, and debug the codebase step-by-step:
 
-- **Ideation & Intent**:
-Defining key workflows (energy-based task tagging, real-time extension-to-webapp syncing, week-view calendar layouts).
+- **Ideation & Feature Expansion**:
+  Adding energy-based task tagging, real-time extension-to-webapp syncing, week-view calendar layouts, and a dedicated **Monthly Analytics engine**.
 
-- **Iterative Feedback**:
-Directing theme palettes, micro-interactions, layout density, and instant background image uploads via continuous voice and visual feedback.
+- **Typography & Aesthetic Iterations**:
+  Testing out Google Fonts (*Caveat*, *Zeyada*, *Abel*, *Space Grotesk*, *Newsreader*) and curating 8 luxury light and dark HSL themes until the visual tone felt modern, warm, and comforting.
+
+- **Micro-Layout Spacing & Ergonomics**:
+  Step-by-step tuning of vertical line spacing, font sizes (38px brand logo, 26px section titles), card boundaries, and eliminating window-level scrolling in favor of an internal single-screen layout.
 
 - **Hands-on Testing & Refining**:
-Testing out new ideas in real-time, catching glitches, and constantly tweaking features until the webpage felt smooth, reliable, and effortless to use.
-
-> 📝 **Note on Development & Commit History**: 
-> Although published to GitHub in an initial repository push, Clarity was built, tested, and polished over hours of continuous, hands-on session work — endlessly tweaking themes, debugging features, and testing workflows until it was ready for everyone to try out!
+  Testing out new ideas in real-time, catching glitches, uneven layouts look,experimenting with fonts choices to give for better personal feel with visiblity to the user,and constantly tweaking features until the webpage felt smooth, reliable, and effortless to use.
 
 ---
 
-## ✦ Key Features
+## ✦ Key Features & Recent Enhancements
 
 ### 1. Dual Interface & Real-Time Sync
 - **Chrome Extension Popup (`popup.html`)**: Instant task access and quick-entry directly from your browser toolbar.
-- **Full Web App Dashboard (`index.html`)**: A spacious workspace featuring task stats, motivation cards, and an interactive calendar.
+- **Full Web App Dashboard (`index.html`)**: A spacious workspace featuring task stats, motivation cards, an interactive calendar, and monthly insights.
 - **Real-Time Storage Sync**: Edits in the extension popup immediately reflect in open planner tabs via `chrome.storage.onChanged` and `window.storage` events.
 
-### 2. Energy Priority System & Smart Sorting
+### 2. 🔤 Interactive Typography Engine
+Select your preferred font style inside the Preferences modal with live, authentic font previews:
+- **Caveat**: Expressive handwritten cursive.
+- **Zeyada**: Elegant cursive handwriting.
+- **Abel**: Modern minimalist sans-serif.
+- **Space Grotesk & Syne**: Modern creative sans pairing.
+- **Newsreader & Jakarta**: Literary publishing serif pairing.
+
+### 3. 📊 Monthly Analytics Dashboard
+A dedicated **Monthly Insights** card at the bottom of the side panel that automatically calculates:
+- **Total Tasks**: Total tasks created during the current month.
+- **Completed Tasks**: Tasks accomplished this month.
+- **Efficiency Rate**: Percentage-based completion rate with a dynamic fill bar.
+- **Energy Level Breakdown**: Count of Light (🟢), Steady (🟠), and Deep Focus (🔴) tasks for the month.
+
+### 4. 🎨 8 Curated Luxury Light & Dark Themes
+Switch seamlessly between curated HSL color themes:
+- **Dark Themes**: 🌌 *Midnight* (Deep violet & silver), 🌲 *Emerald* (Forest & emerald), 🍒 *Cherry Red* (Crimson & rose), 🌊 *Ocean* (Navy & cobalt).
+- **Light Themes**: 🍁 *Autumn Brown* (Rich terracotta & rust), 🌸 *Rose Pink* (Blush & quartz), 🌿 *Sage Mint* (Fresh mint & pine), 📜 *Cream Linen* (Oat cream & espresso).
+
+### 5. ⚙️ Collapsible Preferences & Style Modal
+- **Personal Reminder Textarea**: Positioned right at the top of the modal for personal goals and notes.
+- **Collapsible Accordions**: Theme and typography choices organized into collapsible `<details>` accordion sections (`🎨 Workspace Themes` and `🔤 Typography Styles`).
+- **Clean Action Footer**: Styled cancel and save controls with clear hover states.
+
+### 6. 🖼️ Side-Panel Image Card & Topbar Streak Pill
+- **Inspiration Image Uploader**: Upload any background or motivation picture directly on the top side-panel card (`object-fit: cover` with quick `Change` and `Remove` controls).
+- **Header Streak Counter**: Daily completion streak pill (`🔥 0 day streak`) positioned right in the topbar header next to the Settings icon for instant momentum.
+
+### 7. ⚡ Energy Priority System & Smart Sorting
 Categorize tasks by the mental energy they require:
 - 🟢 **Light** (`low`): Quick, easy wins.
 - 🟠 **Steady** (`medium`): Standard focus tasks.
 - 🔴 **Deep Focus** (`high`): High-concentration priorities.
-- **Automatic Priority Ranking**: High-energy "Deep Focus" tasks automatically sort to the top, ensuring critical work gets highlighted first.
+- **Automatic Sorting**: High-energy "Deep Focus" tasks automatically sort to the top, ensuring critical work gets highlighted first.
 
-### 3. Week-View & Month-View Calendar
+### 8. 📅 Week-View & Month-View Calendar
 - Default **Week-View** (Monday – Sunday) for immediate weekly clarity.
 - Toggleable **Month-View** grid.
 - **Glowing Gold Task Indicators**: Visual dots highlight days with pending commitments.
-
-### 4. Custom Motivation & Instant Image Uploads
-- Embedded quote card with daily inspirational reminders.
-- COOL part: You can customize the motivation/inspirational text display to your wording of choice
-- **Instant Side-Panel Image Uploader**: Upload any background image directly from the motivation card to personalize your dashboard background.
-- Preserved multiline reminder formatting for personal goals and notes.
-
-### 5. Intentional Productivity
-- **Focus Anchors**: Star a single primary task to anchor your focus.
-- **Streak Tracker**: Keep momentum with a daily completion streak counter.
-- **No-Deadline & Untimed Tasks**: Flexible handling for untimed tasks alongside deadline-driven commitments.
-
-### 6. 7 Curated HSL Dark Themes
-Switch seamlessly between dark-mode palettes:
-- 🌌 **Midnight** (Ink & Silver)
-- 🌲 **Emerald** (Forest & Gold)
-- ☕ **Amber** (Espresso & Bronze)
-- ❄️ **Nordic** (Slate & Ice Blue)
-- 🌑 **Graphite** (Charcoal & Sand)
-- 🌊 **Ocean** (Navy & Cobalt)
-- 🍇 **Plum** (Violet & Rose)
 
 ---
 
@@ -91,7 +99,7 @@ Switch seamlessly between dark-mode palettes:
 
 - **Frontend Core**: Vanilla JavaScript (ES6+), Semantic HTML5, Custom Vanilla CSS3.
 - **Extension API**: Chrome Extension Manifest V3 (`storage`, `notifications`, `tabs`).
-- **Typography**: Google Fonts (*Fraunces*, *Inter*).
+- **Typography**: Google Fonts (*Abel*, *Caveat*, *Zeyada*, *Plus Jakarta Sans*, *Space Grotesk*, *Syne*, *Newsreader*).
 
 ---
 

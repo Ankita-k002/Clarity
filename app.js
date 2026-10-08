@@ -13,8 +13,9 @@ let tasks = [];
 let activeView = 'today';
 let calendarViewMode = 'week'; // Default to Week view on open
 let calendarCursor = new Date();
-let settings = { theme: 'midnight', inspirationText: '', inspirationImage: '' };
+let settings = { theme: 'midnight', fontStyle: 'editorial', inspirationText: '', inspirationImage: '' };
 let draftTheme = 'midnight';
+let draftFont = 'editorial';
 let draftImage = '';
 
 const $ = (selector, context = document) => context.querySelector(selector);
@@ -286,12 +287,51 @@ function renderOverview() {
   if ($('#weekNote')) $('#weekNote').textContent = count === 0 ? 'Nothing added yet.' : count === 1 ? 'One commitment is waiting for you.' : 'Take one thoughtful step at a time.';
 }
 
+function renderAnalytics() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+  const monthName = now.toLocaleString(undefined, { month: 'long' });
+
+  if ($('#analyticsMonthName')) $('#analyticsMonthName').textContent = monthName;
+
+  const monthlyTasks = tasks.filter(t => {
+    if (t.createdAt) {
+      const createdDate = new Date(t.createdAt);
+      if (createdDate.getFullYear() === currentYear && createdDate.getMonth() === currentMonth) return true;
+    }
+    if (t.date) {
+      const [y, m] = t.date.split('-').map(Number);
+      if (y === currentYear && (m - 1) === currentMonth) return true;
+    }
+    return false;
+  });
+
+  const total = monthlyTasks.length;
+  const completed = monthlyTasks.filter(t => t.completed).length;
+  const efficiency = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  const lowCount = monthlyTasks.filter(t => (t.priority || 'medium') === 'low').length;
+  const medCount = monthlyTasks.filter(t => (t.priority || 'medium') === 'medium').length;
+  const highCount = monthlyTasks.filter(t => (t.priority || 'medium') === 'high').length;
+
+  if ($('#analyticsTotalTasks')) $('#analyticsTotalTasks').textContent = total;
+  if ($('#analyticsCompletedTasks')) $('#analyticsCompletedTasks').textContent = completed;
+  if ($('#analyticsEfficiency')) $('#analyticsEfficiency').textContent = `${efficiency}%`;
+  if ($('#analyticsEfficiencyFill')) $('#analyticsEfficiencyFill').style.width = `${efficiency}%`;
+
+  if ($('#analyticsEnergyLow')) $('#analyticsEnergyLow').textContent = `🟢 ${lowCount} Light`;
+  if ($('#analyticsEnergyMedium')) $('#analyticsEnergyMedium').textContent = `🟠 ${medCount} Steady`;
+  if ($('#analyticsEnergyHigh')) $('#analyticsEnergyHigh').textContent = `🔴 ${highCount} Deep`;
+}
+
 function render() {
   renderTasks();
   renderFocus();
   renderStreak();
   renderCalendar();
   renderOverview();
+  renderAnalytics();
 }
 
 async function persist() {
@@ -331,10 +371,16 @@ function closeDialog() {
 }
 
 const ALL_THEMES = ['midnight', 'emerald', 'cherry', 'ocean', 'autumn', 'rose', 'sage', 'linen'];
+const ALL_FONTS = ['caveat', 'zeyada', 'abel', 'creative', 'classic'];
 
 function applyTheme(theme) {
   ALL_THEMES.forEach(t => document.body.classList.remove(`theme-${t}`));
   document.body.classList.add(`theme-${theme}`);
+}
+
+function applyFont(font) {
+  ALL_FONTS.forEach(f => document.body.classList.remove(`font-${f}`));
+  document.body.classList.add(`font-${font || 'zeyada'}`);
 }
 
 function renderInspiration() {
@@ -343,16 +389,30 @@ function renderInspiration() {
   const image = settings.inspirationImage;
   if ($('#quoteText')) $('#quoteText').textContent = customText || quote[0];
   if ($('#quoteAuthor')) $('#quoteAuthor').textContent = customText ? '' : quote[1];
-  if ($('#inspirationImage')) {
-    $('#inspirationImage').src = image || '';
-    $('#inspirationImage').classList.toggle('hidden', !image);
+  
+  const sideDisplay = $('#sideImageDisplay');
+  const emptyPrompt = $('#emptyImagePrompt');
+  const activeView = $('#activeImageView');
+  if (sideDisplay && emptyPrompt && activeView) {
+    if (image) {
+      sideDisplay.src = image;
+      emptyPrompt.classList.add('hidden');
+      activeView.classList.remove('hidden');
+    } else {
+      sideDisplay.src = '';
+      emptyPrompt.classList.remove('hidden');
+      activeView.classList.add('hidden');
+    }
   }
   if ($('#inspirationCard')) $('#inspirationCard').classList.toggle('has-image', !!image);
-  if ($('#activeImageBar')) $('#activeImageBar').classList.toggle('hidden', !image);
 }
 
 function updateThemeChoices() {
   document.querySelectorAll('.theme-choice').forEach(button => button.classList.toggle('selected', button.dataset.theme === draftTheme));
+}
+
+function updateFontChoices() {
+  document.querySelectorAll('.font-choice').forEach(button => button.classList.toggle('selected', button.dataset.font === draftFont));
 }
 
 function setPreview(image) {
@@ -362,18 +422,23 @@ function setPreview(image) {
 
 function openSettings() {
   draftTheme = settings.theme;
+  draftFont = settings.fontStyle || 'zeyada';
   draftImage = settings.inspirationImage || '';
   if ($('#inspirationText')) $('#inspirationText').value = settings.inspirationText || '';
   if ($('#inspirationUpload')) $('#inspirationUpload').value = '';
   if ($('#uploadMessage')) $('#uploadMessage').textContent = '';
   setPreview(draftImage);
   updateThemeChoices();
+  updateFontChoices();
   const dialog = $('#settingsDialog');
   if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
 }
 
 function closeSettings(keepChanges) {
-  if (!keepChanges) applyTheme(settings.theme);
+  if (!keepChanges) {
+    applyTheme(settings.theme);
+    applyFont(settings.fontStyle);
+  }
   const dialog = $('#settingsDialog');
   if (dialog && typeof dialog.close === 'function') dialog.close();
 }
@@ -398,6 +463,7 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
       if (changes[SETTINGS_KEY]) {
         settings = { ...settings, ...(changes[SETTINGS_KEY].newValue || {}) };
         applyTheme(settings.theme);
+        applyFont(settings.fontStyle);
         renderInspiration();
         render();
       }
@@ -411,6 +477,7 @@ window.addEventListener('storage', (e) => {
   } else if (e.key === SETTINGS_KEY) {
     settings = { ...settings, ...JSON.parse(e.newValue || '{}') };
     applyTheme(settings.theme);
+    applyFont(settings.fontStyle);
     renderInspiration();
     render();
   }
@@ -421,7 +488,9 @@ async function init() {
   tasks = data[STORAGE_KEY] || [];
   settings = { ...settings, ...(data[SETTINGS_KEY] || {}) };
   if (!ALL_THEMES.includes(settings.theme)) settings.theme = 'midnight';
+  if (!ALL_FONTS.includes(settings.fontStyle)) settings.fontStyle = 'zeyada';
   applyTheme(settings.theme);
+  applyFont(settings.fontStyle);
 
   const now = new Date();
   if ($('#dateLabel')) $('#dateLabel').textContent = now.toLocaleDateString(undefined, {weekday:'long', month:'long', day:'numeric'});
@@ -548,6 +617,12 @@ async function init() {
     updateThemeChoices();
   }));
 
+  document.querySelectorAll('.font-choice').forEach(button => button.addEventListener('click', () => {
+    draftFont = button.dataset.font;
+    applyFont(draftFont);
+    updateFontChoices();
+  }));
+
   if ($('#inspirationUpload')) {
     $('#inspirationUpload').addEventListener('change', async event => {
       const file = event.target.files[0];
@@ -583,13 +658,27 @@ async function init() {
       settings = {
         ...settings,
         theme: draftTheme,
+        fontStyle: draftFont,
         inspirationText: $('#inspirationText').value.trim(),
         inspirationImage: draftImage
       };
       await setStore({ [SETTINGS_KEY]: settings });
       applyTheme(settings.theme);
+      applyFont(settings.fontStyle);
       renderInspiration();
       closeSettings(true);
+    });
+  }
+
+  if ($('#emptyImagePrompt')) {
+    $('#emptyImagePrompt').addEventListener('click', () => {
+      if ($('#sideCardImageInput')) $('#sideCardImageInput').click();
+    });
+  }
+
+  if ($('#sideCardImageChange')) {
+    $('#sideCardImageChange').addEventListener('click', () => {
+      if ($('#sideCardImageInput')) $('#sideCardImageInput').click();
     });
   }
 
