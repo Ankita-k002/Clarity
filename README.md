@@ -24,16 +24,19 @@ Clarity is a **vibe-coded** project, crafted through continuous **Human-in-the-L
 I conceptualized the features, layout requirements, aesthetic guidelines, typography, and user experience workflows, while pairing with advanced AI tools (**Codex** at first, then rest with **Antigravity IDE**) to implement, refine, and debug the codebase step-by-step:
 
 - **Ideation & Feature Expansion**:
-  Adding energy-based task tagging, real-time extension-to-webapp syncing, week-view calendar layouts, and a dedicated **Monthly Analytics engine**.
+  Adding energy-based task tagging, real-time extension-to-webapp syncing, week-view calendar layouts, custom date/time controls, background notification scheduling, and a dedicated **Monthly Analytics engine**.
 
 - **Typography & Aesthetic Iterations**:
-  Testing out Google Fonts (*Caveat*, *Zeyada*, *Abel*, *Space Grotesk*, *Newsreader*) and curating 8 luxury light and dark HSL themes until the visual tone felt modern, warm, and comforting.
+  Testing out Google Fonts (*Caveat*, *Rajdhani*, *Abel*, *Quicksand*, *Space Grotesk*, *Newsreader*) and curating 8 luxury light and dark HSL themes until the visual tone feels personal.
+
+- **Notifications UI & Desktop Reminders Engine**:
+  Building a dedicated notifications management card inside Preferences with interactive **Test Notification** triggers, browser system alerts via `chrome.notifications`, and animated in-app toast alerts.
 
 - **Micro-Layout Spacing & Ergonomics**:
-  Step-by-step tuning of vertical line spacing, font sizes (38px brand logo, 26px section titles), card boundaries, and eliminating window-level scrolling in favor of an internal single-screen layout.
+  Step-by-step tuning of vertical line spacing, font sizes (38px brand logo, 26px section titles), center hero action bar, card boundaries, and eliminating window-level scrolling in favor of an internal single-screen layout.
 
-- **Hands-on Testing & Refining**:
-  Testing out new ideas in real-time, catching glitches, uneven layouts look,experimenting with fonts choices to give for better personal feel with visiblity to the user,and constantly tweaking features until the webpage felt smooth, reliable, and effortless to use.
+- **Hands-on Testing, Personal Checking & Refining**:
+  Testing out new ideas in real-time, catching glitches, fixing uneven layout bugs, experimenting with font choices based on legibility and personal feel, eliminating browser native date/time input inconsistencies with custom controls, and constantly tweaking features, experimenting with themes and fonts, until the webpage felt smooth, reliable, personal and effortless to use.
 
 ---
 
@@ -47,40 +50,51 @@ I conceptualized the features, layout requirements, aesthetic guidelines, typogr
 ### 2. 🔤 Interactive Typography Engine
 Select your preferred font style inside the Preferences modal with live, authentic font previews:
 - **Caveat**: Expressive handwritten cursive.
-- **Zeyada**: Elegant cursive handwriting.
+- **Rajdhani**: Sleek technical sans-serif.
 - **Abel**: Modern minimalist sans-serif.
+- **Quicksand**: Soft geometric rounded sans.
 - **Space Grotesk & Syne**: Modern creative sans pairing.
 - **Newsreader & Jakarta**: Literary publishing serif pairing.
 
-### 3. 📊 Monthly Analytics Dashboard
+### 3. 🔔 Smart Reminders & Notification System
+- **Multi-Tier Deadline Alerts**: Automatic reminders triggered **1 hour** before, **10 minutes** before, and immediately when a deadline passes.
+- **Gentle Flexible Reminders**: Tasks without set times receive evenly spaced gentle alerts across the day.
+- **Interactive Test Notification**: Instant notification testing directly within the Preferences modal (`🔔 Send Test Notification`) with real-time status feedback.
+- **In-App Toast Alerts**: Custom themed, animated popup toasts (`.clarity-toast`) for active browser tabs.
+
+### 4. 🎨 8 Curated Luxury Light & Dark HSL Themes
+Switch seamlessly between curated HSL color themes refined through visual testing:
+- **Dark Themes**: 🌌 *Midnight* (Deep violet & silver), 🌲 *Emerald* (Forest & emerald), 🍒 *Cherry Red* (Crimson & rose), 🌊 *Ocean* (Navy & cobalt).
+- **Light Themes**: 🌿 *Moss Green* (Dark olive & leafy lime), ☕ *Mocha Brown* (Deep caramel & grayish brown), 🍁 *Autumn Brown* (Rich terracotta & rust), 🌸 *Rose Pink* (Blush & quartz).
+
+### 5. 🗓️ Custom Theme Mini-Calendar & Time Selector
+- **Theme-Matched Date Picker**: Custom mini-calendar popover that seamlessly adapts to the active HSL workspace theme, replacing standard browser OS date pickers.
+- **Custom 12-Hour Dropdown Time Picker**: Built-in Hour, Minute, and AM/PM selection dropdowns for precise deadline scheduling without native input styling glitches.
+
+### 6. 📊 Monthly Analytics Dashboard
 A dedicated **Monthly Insights** card at the bottom of the side panel that automatically calculates:
 - **Total Tasks**: Total tasks created during the current month.
-- **Completed Tasks**: Tasks accomplished this month.
+- **Past Deadline Count**: Real-time counter of tasks exceeding their deadline.
 - **Efficiency Rate**: Percentage-based completion rate with a dynamic fill bar.
 - **Energy Level Breakdown**: Count of Light (🟢), Steady (🟠), and Deep Focus (🔴) tasks for the month.
 
-### 4. 🎨 8 Curated Luxury Light & Dark Themes
-Switch seamlessly between curated HSL color themes:
-- **Dark Themes**: 🌌 *Midnight* (Deep violet & silver), 🌲 *Emerald* (Forest & emerald), 🍒 *Cherry Red* (Crimson & rose), 🌊 *Ocean* (Navy & cobalt).
-- **Light Themes**: 🍁 *Autumn Brown* (Rich terracotta & rust), 🌸 *Rose Pink* (Blush & quartz), 🌿 *Sage Mint* (Fresh mint & pine), 📜 *Cream Linen* (Oat cream & espresso).
-
-### 5. ⚙️ Collapsible Preferences & Style Modal
+### 7. ⚙️ Collapsible Preferences & Style Modal
 - **Personal Reminder Textarea**: Positioned right at the top of the modal for personal goals and notes.
-- **Collapsible Accordions**: Theme and typography choices organized into collapsible `<details>` accordion sections (`🎨 Workspace Themes` and `🔤 Typography Styles`).
+- **Collapsible Accordions**: Organized into `<details>` accordion sections (`🎨 Workspace Themes`, `🔤 Typography Styles`, and `🔔 Reminders & Notifications`).
 - **Clean Action Footer**: Styled cancel and save controls with clear hover states.
 
-### 6. 🖼️ Side-Panel Image Card & Topbar Streak Pill
+### 8. 🖼️ Side-Panel Image Card & Topbar Streak Pill
 - **Inspiration Image Uploader**: Upload any background or motivation picture directly on the top side-panel card (`object-fit: cover` with quick `Change` and `Remove` controls).
 - **Header Streak Counter**: Daily completion streak pill (`🔥 0 day streak`) positioned right in the topbar header next to the Settings icon for instant momentum.
 
-### 7. ⚡ Energy Priority System & Smart Sorting
+### 9. ⚡ Energy Priority System & Smart Sorting
 Categorize tasks by the mental energy they require:
 - 🟢 **Light** (`low`): Quick, easy wins.
 - 🟠 **Steady** (`medium`): Standard focus tasks.
 - 🔴 **Deep Focus** (`high`): High-concentration priorities.
 - **Automatic Sorting**: High-energy "Deep Focus" tasks automatically sort to the top, ensuring critical work gets highlighted first.
 
-### 8. 📅 Week-View & Month-View Calendar
+### 10. 📅 Week-View & Month-View Calendar
 - Default **Week-View** (Monday – Sunday) for immediate weekly clarity.
 - Toggleable **Month-View** grid.
 - **Glowing Gold Task Indicators**: Visual dots highlight days with pending commitments.
@@ -98,8 +112,8 @@ Categorize tasks by the mental energy they require:
 ## 🛠 Tech Stack
 
 - **Frontend Core**: Vanilla JavaScript (ES6+), Semantic HTML5, Custom Vanilla CSS3.
-- **Extension API**: Chrome Extension Manifest V3 (`storage`, `notifications`, `tabs`).
-- **Typography**: Google Fonts (*Abel*, *Caveat*, *Zeyada*, *Plus Jakarta Sans*, *Space Grotesk*, *Syne*, *Newsreader*).
+- **Extension API**: Chrome Extension Manifest V3 (`storage`, `notifications`, `alarms`, `tabs`).
+- **Typography**: Google Fonts (*Abel*, *Caveat*, *Rajdhani*, *Quicksand*, *Plus Jakarta Sans*, *Space Grotesk*, *Syne*, *Newsreader*).
 
 ---
 

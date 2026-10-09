@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Abel&family=Caveat:wght@600;700&family=Zeyada&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@600;700;800&family=Newsreader:ital,wght@0,500;0,600;1,400;1,600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Abel&family=Caveat:wght@600;700&family=Quicksand:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@600;700;800&family=Newsreader:ital,wght@0,500;0,600;1,400;1,600&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -59,9 +59,6 @@
                   aria-label="Add task title" required />
                 <button type="submit" class="hero-quick-btn"><span>+</span> Add Task</button>
               </form>
-              <button class="hero-modal-btn" id="heroOpenModal" type="button" title="Add task with date & reminder">
-                <span>🗓</span> Add with deadline
-              </button>
             </div>
           </div>
         </section>
@@ -86,7 +83,6 @@
             <div class="empty-illustration">✦</div>
             <h3>Nothing calling for you here.</h3>
             <p>Add a task or take this as permission to exhale.</p>
-            <button class="soft-button" id="emptyAdd">+ Add your first task</button>
           </div>
         </section>
       </div>
@@ -161,8 +157,8 @@
               <span class="stat-label">Total Tasks</span>
             </div>
             <div class="analytics-stat-box">
-              <span class="stat-number" id="analyticsCompletedTasks">0</span>
-              <span class="stat-label">Completed</span>
+              <span class="stat-number" id="analyticsPastDeadline">0</span>
+              <span class="stat-label">Past deadline</span>
             </div>
             <div class="analytics-stat-box">
               <span class="stat-number" id="analyticsEfficiency">0%</span>
@@ -235,13 +231,13 @@
               <span></span>
               <div class="theme-choice-text"><b>Rose Pink</b><small>Blush & quartz</small></div>
             </button>
-            <button class="theme-choice sage" data-theme="sage" type="button">
+            <button class="theme-choice moss" data-theme="moss" type="button">
               <span></span>
-              <div class="theme-choice-text"><b>Sage Mint</b><small>Fresh mint & pine</small></div>
+              <div class="theme-choice-text"><b>Moss Green</b><small>Dark olive & leafy lime</small></div>
             </button>
-            <button class="theme-choice linen" data-theme="linen" type="button">
+            <button class="theme-choice mocha" data-theme="mocha" type="button">
               <span></span>
-              <div class="theme-choice-text"><b>Cream Linen</b><small>Oat cream & espresso</small></div>
+              <div class="theme-choice-text"><b>Mocha Brown</b><small>Deep caramel & grayish brown</small></div>
             </button>
           </div>
         </div>
@@ -260,11 +256,14 @@
             <button class="font-choice font-preview-caveat" data-font="caveat" type="button">
               <b>Caveat</b><small>Expressive handwritten font</small>
             </button>
-            <button class="font-choice font-preview-zeyada" data-font="zeyada" type="button">
-              <b>Zeyada</b><small>Elegant cursive handwriting</small>
+            <button class="font-choice font-preview-rajdhani" data-font="rajdhani" type="button">
+              <b>Rajdhani</b><small>Sleek technical sans</small>
             </button>
             <button class="font-choice font-preview-abel" data-font="abel" type="button">
               <b>Abel</b><small>Modern minimalist sans</small>
+            </button>
+            <button class="font-choice font-preview-quicksand" data-font="quicksand" type="button">
+              <b>Quicksand</b><small>Soft geometric rounded sans</small>
             </button>
             <button class="font-choice font-preview-creative" data-font="creative" type="button">
               <b>Space Grotesk & Syne</b><small>Modern creative sans</small>
@@ -272,6 +271,25 @@
             <button class="font-choice font-preview-classic" data-font="classic" type="button">
               <b>Newsreader & Jakarta</b><small>Literary publishing serif</small>
             </button>
+          </div>
+        </div>
+      </details>
+
+      <div class="settings-divider"></div>
+
+      <!-- 4. Collapsible Reminders & Notifications Accordion Toggle -->
+      <details class="settings-accordion" open>
+        <summary class="accordion-summary">
+          <span class="summary-title">🔔 Reminders & Notifications</span>
+          <span class="summary-icon">▾</span>
+        </summary>
+        <div class="accordion-content">
+          <div class="notification-settings-box">
+            <p class="notification-desc">Receive desktop alerts 1 hour & 10 minutes before deadline times, plus gentle automatic reminders for today's tasks.</p>
+            <div class="notification-action-row">
+              <button class="test-notification-btn" id="webTestNotification" type="button">🔔 Send Test Notification</button>
+              <span class="notification-status-text" id="webNotificationStatus" role="status"></span>
+            </div>
           </div>
         </div>
       </details>
@@ -287,19 +305,13 @@
     <form id="taskForm">
       <div class="dialog-header">
         <div>
-          <p class="eyebrow">A small promise</p>
           <h2 id="dialogTitle">Add a task</h2>
         </div><button class="icon-button close-button" type="button" id="closeTaskModal" aria-label="Close">×</button>
       </div>
       <label class="field-label" for="taskTitle">What would you like to remember?</label>
       <input id="taskTitle" name="title" autocomplete="off" placeholder="e.g. Send the project draft" required
         maxlength="120" />
-      <div class="form-grid">
-        <div><label class="field-label" for="taskDate">When is it due?</label><input id="taskDate" name="date"
-            type="date" /></div>
-        <div><label class="field-label" for="taskTime">At what time?</label><input id="taskTime" name="time"
-            type="time" /></div>
-      </div>
+      
       <div class="form-grid">
         <div><label class="field-label" for="taskPriority">Energy it needs</label><select id="taskPriority"
             name="priority">
@@ -313,6 +325,126 @@
             <option value="weekly">Every week</option>
             <option value="monthly">Every month</option>
           </select></div>
+      </div>
+
+      <div class="deadline-toggle-wrapper">
+        <button type="button" class="deadline-toggle-btn" id="modalDeadlineToggle">🗓 + Add deadline date & time</button>
+      </div>
+
+      <div id="modalDeadlineFields" class="modal-deadline-fields hidden">
+        <div class="form-grid">
+          <div>
+            <label class="field-label" for="datePickerBtn">WHEN IS IT DUE?</label>
+            <div class="custom-date-picker-wrapper">
+              <button class="custom-date-display" id="datePickerBtn" type="button">
+                <span id="selectedDateText">Select date</span>
+                <span class="calendar-icon">🗓</span>
+              </button>
+              <input type="hidden" id="taskDate" name="date" />
+              
+              <!-- Custom Theme Mini Calendar Popover -->
+              <div class="mini-calendar-popover hidden" id="miniCalendarPopover">
+                <div class="mini-cal-header">
+                  <button class="mini-cal-nav" id="miniCalPrev" type="button">‹</button>
+                  <span class="mini-cal-month" id="miniCalMonthYear">October 2026</span>
+                  <button class="mini-cal-nav" id="miniCalNext" type="button">›</button>
+                </div>
+                <div class="mini-cal-weekdays">
+                  <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                </div>
+                <div class="mini-cal-grid" id="miniCalGrid"></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">AT WHAT TIME?</label>
+            <div class="custom-time-picker-row">
+              <select class="custom-time-select" id="taskTimeHour" aria-label="Hour">
+                <option value="12">12</option>
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+              </select>
+              <span class="time-colon">:</span>
+              <select class="custom-time-select" id="taskTimeMinute" aria-label="Minute">
+                <option value="00">00</option>
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+                <option value="32">32</option>
+                <option value="33">33</option>
+                <option value="34">34</option>
+                <option value="35">35</option>
+                <option value="36">36</option>
+                <option value="37">37</option>
+                <option value="38">38</option>
+                <option value="39">39</option>
+                <option value="40">40</option>
+                <option value="41">41</option>
+                <option value="42">42</option>
+                <option value="43">43</option>
+                <option value="44">44</option>
+                <option value="45">45</option>
+                <option value="46">46</option>
+                <option value="47">47</option>
+                <option value="48">48</option>
+                <option value="49">49</option>
+                <option value="50">50</option>
+                <option value="51">51</option>
+                <option value="52">52</option>
+                <option value="53">53</option>
+                <option value="54">54</option>
+                <option value="55">55</option>
+                <option value="56">56</option>
+                <option value="57">57</option>
+                <option value="58">58</option>
+                <option value="59">59</option>
+              </select>
+              <select class="custom-time-select period-select" id="taskTimeAmpm" aria-label="AM or PM">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+              </select>
+              <input type="hidden" id="taskTime" name="time" />
+            </div>
+          </div>
+        </div>
       </div>
       <label class="focus-choice"><input id="taskFocus" name="focus" type="checkbox" /><span
           class="custom-check">✓</span><span>Make this my focus</span></label>
@@ -329,6 +461,7 @@
           <h3 class="task-title"></h3>
           <span class="focus-pill hidden">Focus</span>
           <span class="priority-pill"></span>
+          <span class="status-tag hidden"></span>
         </div>
         <p class="task-meta"></p>
       </div>
@@ -338,6 +471,8 @@
       </div>
     </article>
   </template>
+
+  <div class="clarity-toast-container" id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
 
   <script src="app.js"></script>
 </body>

@@ -17,7 +17,7 @@ const today = () => dateKey(new Date());
 const parse = key => { const [y,m,d] = key.split('-').map(Number); return new Date(y, m - 1, d); };
 const generateId = () => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).substring(2));
 
-function applyTheme(theme) { document.body.className = ['midnight','emerald','cherry','ocean','autumn','rose','sage','linen'].includes(theme) ? `theme-${theme}` : 'theme-midnight'; }
+function applyTheme(theme) { document.body.className = ['midnight','emerald','cherry','ocean','autumn','rose','moss','mocha'].includes(theme) ? `theme-${theme}` : 'theme-midnight'; }
 
 function getStore() {
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
@@ -43,6 +43,21 @@ function setStore(data) {
   return Promise.resolve();
 }
 
+function format12Hour(timeStr) {
+  if (!timeStr) return '';
+  const [hStr, mStr] = timeStr.split(':');
+  let hours = parseInt(hStr, 10);
+  const mins = parseInt(mStr, 10);
+  if (isNaN(hours) || isNaN(mins)) return timeStr;
+
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+
+  const formattedMins = String(mins).padStart(2, '0');
+  return `${hours}:${formattedMins} ${ampm}`;
+}
+
 function meta(task) {
   if (!task.date) return task.repeat && task.repeat !== 'none' ? `Repeats ${task.repeat}` : 'No deadline';
   const due = parse(task.date);
@@ -50,8 +65,7 @@ function meta(task) {
   const isTomorrow = task.date === dateKey(new Date(Date.now() + 86400000));
   const dayLabel = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : due.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
   if (!task.time) return task.repeat && task.repeat !== 'none' ? `${dayLabel} · Repeats ${task.repeat}` : `Due ${dayLabel}`;
-  const [hours, minutes] = task.time.split(':'); due.setHours(+hours, +minutes);
-  return `Due ${dayLabel} at ${due.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;
+  return `Due ${dayLabel} at ${format12Hour(task.time)}`;
 }
 
 function dueAt(task) {

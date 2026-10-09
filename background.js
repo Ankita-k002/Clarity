@@ -28,10 +28,21 @@ function scheduleTimed(task, now) {
     const occurrence = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
     if (!occursOn(task, keyFor(occurrence))) continue;
     const deadline = new Date(occurrence.getFullYear(), occurrence.getMonth(), occurrence.getDate(), hours, minutes).getTime();
-    if (deadline <= now.getTime()) continue;
     const leadTime = deadline - now.getTime();
-    if (leadTime > 2 * 60 * 60 * 1000) createAlarm(`${ALARM_PREFIX}${task.id}|timed-60`, deadline - 60 * 60 * 1000);
-    if (leadTime > 10 * 60 * 1000) createAlarm(`${ALARM_PREFIX}${task.id}|timed-10`, deadline - 10 * 60 * 1000);
+    if (leadTime < -24 * 60 * 60 * 1000) continue;
+    
+    // 1. 1 hour before deadline
+    if (leadTime > 60 * 60 * 1000) {
+      createAlarm(`${ALARM_PREFIX}${task.id}|timed-60`, deadline - 60 * 60 * 1000);
+    }
+    // 2. 10 minutes before deadline
+    if (leadTime > 10 * 60 * 1000) {
+      createAlarm(`${ALARM_PREFIX}${task.id}|timed-10`, deadline - 10 * 60 * 1000);
+    }
+    // 3. Exactly when deadline passes
+    if (leadTime > 0) {
+      createAlarm(`${ALARM_PREFIX}${task.id}|timed-passed`, deadline);
+    }
     return;
   }
 }
@@ -74,12 +85,21 @@ chrome.alarms.onAlarm.addListener(alarm => {
   chrome.storage.local.get(TASK_KEY, data => {
     const task = (data[TASK_KEY] || []).find(item => item.id === taskId);
     if (!task || task.completed) return;
-    const timedText = reminder === 'timed-60' ? 'One hour before your deadline.' : reminder === 'timed-10' ? 'Ten minutes before your deadline.' : 'A gentle reminder for today.';
+    
+    let message = 'A gentle reminder for today.';
+    if (reminder === 'timed-60') {
+      message = '1 hour remaining till deadline';
+    } else if (reminder === 'timed-10') {
+      message = '10 minutes remaining till deadline';
+    } else if (reminder === 'timed-passed') {
+      message = 'Past the deadline';
+    }
+
     chrome.notifications.create(alarm.name, {
       type: 'basic',
       iconUrl: chrome.runtime.getURL('icon.png'),
-      title: 'Clarity',
-      message: `${task.title}\n${timedText}`,
+      title: task.title,
+      message: message,
       priority: 2
     });
   });

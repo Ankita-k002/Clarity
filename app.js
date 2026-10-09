@@ -44,6 +44,24 @@ function setStore(data) {
   return Promise.resolve();
 }
 
+function isPastDeadline(task) {
+  if (task.completed) return false;
+  if (!task.date) return false;
+
+  const now = new Date();
+  const [y, m, d] = task.date.split('-').map(Number);
+  const due = new Date(y, m - 1, d);
+
+  if (task.time) {
+    const [h, min] = task.time.split(':').map(Number);
+    due.setHours(h, min, 59, 999);
+  } else {
+    due.setHours(23, 59, 59, 999);
+  }
+
+  return now > due;
+}
+
 function taskOccursOn(task, dateKey) {
   if (!task.date) return false;
   if (task.repeat === 'none' || !task.repeat) return task.date === dateKey;
@@ -54,16 +72,42 @@ function taskOccursOn(task, dateKey) {
   return start.getDate() === candidate.getDate();
 }
 
+function format12Hour(timeStr) {
+  if (!timeStr) return '';
+  const [hStr, mStr] = timeStr.split(':');
+  let hours = parseInt(hStr, 10);
+  const mins = parseInt(mStr, 10);
+  if (isNaN(hours) || isNaN(mins)) return timeStr;
+
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+
+  const formattedMins = String(mins).padStart(2, '0');
+  return `${hours}:${formattedMins} ${ampm}`;
+}
+
 function dueText(task) {
   if (!task.date) return task.repeat && task.repeat !== 'none' ? `Repeats ${task.repeat}` : 'No deadline';
   const dateObj = parseKey(task.date), today = parseKey(todayKey());
   const diff = Math.round((dateObj - today) / 86400000);
-  let label = diff === 0 ? 'Due today' : diff === 1 ? 'Due tomorrow' : diff === -1 ? 'Overdue (yesterday)' : diff < -1 ? `Overdue (${dateObj.toLocaleDateString(undefined, {month:'short', day:'numeric'})})` : `Due ${dateObj.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'})}`;
+  
+  let label = '';
+  if (isPastDeadline(task)) {
+    if (diff === 0) {
+      label = 'Past deadline (today)';
+    } else if (diff === -1) {
+      label = 'Past deadline (yesterday)';
+    } else {
+      label = `Past deadline (${dateObj.toLocaleDateString(undefined, {month:'short', day:'numeric'})})`;
+    }
+  } else {
+    label = diff === 0 ? 'Due today' : diff === 1 ? 'Due tomorrow' : `Due ${dateObj.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'})}`;
+  }
+
   if (task.repeat && task.repeat !== 'none') label += ` · ${task.repeat}`;
   if (task.time) {
-    const [hours, mins] = task.time.split(':');
-    const d = new Date(); d.setHours(+hours, +mins);
-    label += ` at ${d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}`;
+    label += ` at ${format12Hour(task.time)}`;
   }
   return label;
 }
@@ -74,22 +118,22 @@ function currentTasks() {
   const nextWeek = new Date(now); nextWeek.setDate(now.getDate() + 7);
 
   if (activeView === 'today') {
-    // Today view: ONLY tasks due today or overdue
+    // Today view: tasks with no deadline + tasks due today or past deadline
     return tasks.filter(task => {
-      if (!task.date) return false; // Undated tasks hidden from Today view
+      if (!task.date) return true; // Undated tasks show in Today view
       const dateObj = parseKey(task.date);
       if (taskOccursOn(task, todayKey())) return true; // Due today
-      if (!task.completed && dateObj < today) return true; // Overdue
+      if (!task.completed && (dateObj < today || isPastDeadline(task))) return true; // Past deadline tasks stay visible
       return false;
     });
   }
 
   if (activeView === 'upcoming') {
-    // Upcoming view: tasks due in next 7 days + undated tasks (no deadline)
+    // Upcoming view: tasks due in next 7 days + undated tasks + past deadline tasks
     return tasks.filter(task => {
       if (!task.date) return true;
       const dateObj = parseKey(task.date);
-      return dateObj >= today && dateObj <= nextWeek;
+      return (dateObj >= today && dateObj <= nextWeek) || (!task.completed && isPastDeadline(task));
     });
   }
 
@@ -178,6 +222,20 @@ function renderTasks() {
       const p = task.priority || 'medium';
       priorityPill.className = `priority-pill priority-${p}`;
       priorityPill.textContent = p === 'high' ? 'Deep focus' : p === 'low' ? 'Light' : 'Steady';
+    }
+
+    // Status Tag Pill (Completed / Pending for past deadline tasks)
+    const statusTag = el.querySelector('.status-tag');
+    if (statusTag) {
+      if (task.completed) {
+        statusTag.className = 'status-tag tag-completed';
+        statusTag.textContent = 'Completed';
+      } else if (isPastDeadline(task)) {
+        statusTag.className = 'status-tag tag-pending';
+        statusTag.textContent = 'Pending';
+      } else {
+        statusTag.className = 'status-tag hidden';
+      }
     }
     
     const checkBtn = el.querySelector('.check-button');
@@ -308,15 +366,16 @@ function renderAnalytics() {
   });
 
   const total = monthlyTasks.length;
-  const completed = monthlyTasks.filter(t => t.completed).length;
-  const efficiency = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const pastDeadlineCount = monthlyTasks.filter(t => isPastDeadline(t)).length;
+  const completedCount = monthlyTasks.filter(t => t.completed).length;
+  const efficiency = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
   const lowCount = monthlyTasks.filter(t => (t.priority || 'medium') === 'low').length;
   const medCount = monthlyTasks.filter(t => (t.priority || 'medium') === 'medium').length;
   const highCount = monthlyTasks.filter(t => (t.priority || 'medium') === 'high').length;
 
   if ($('#analyticsTotalTasks')) $('#analyticsTotalTasks').textContent = total;
-  if ($('#analyticsCompletedTasks')) $('#analyticsCompletedTasks').textContent = completed;
+  if ($('#analyticsPastDeadline')) $('#analyticsPastDeadline').textContent = pastDeadlineCount;
   if ($('#analyticsEfficiency')) $('#analyticsEfficiency').textContent = `${efficiency}%`;
   if ($('#analyticsEfficiencyFill')) $('#analyticsEfficiencyFill').style.width = `${efficiency}%`;
 
@@ -354,14 +413,131 @@ async function deleteTask(id) {
   await persist();
 }
 
-function openDialog(date = '') {
+let miniCalCursor = new Date();
+let selectedTaskDateKey = '';
+
+function formatDateForDisplay(dateKey) {
+  if (!dateKey) return 'Select date';
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const dayStr = String(d).padStart(2, '0');
+  const monthStr = monthNames[m - 1];
+  return `${dayStr}-${monthStr}-${y}`;
+}
+
+function setSelectedModalDate(dateKey) {
+  selectedTaskDateKey = dateKey || todayKey();
+  if ($('#taskDate')) $('#taskDate').value = selectedTaskDateKey;
+  if ($('#selectedDateText')) $('#selectedDateText').textContent = formatDateForDisplay(selectedTaskDateKey);
+}
+
+function renderMiniCalendar() {
+  const grid = $('#miniCalGrid');
+  const monthYearEl = $('#miniCalMonthYear');
+  if (!grid || !monthYearEl) return;
+
+  const year = miniCalCursor.getFullYear();
+  const month = miniCalCursor.getMonth();
+  monthYearEl.textContent = miniCalCursor.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+
+  grid.innerHTML = '';
+  const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const prevDaysInMonth = new Date(year, month, 0).getDate();
+
+  for (let i = 0; i < 42; i++) {
+    let date, isMuted = false;
+    if (i < firstDayIndex) {
+      date = new Date(year, month - 1, prevDaysInMonth - firstDayIndex + i + 1);
+      isMuted = true;
+    } else if (i >= firstDayIndex + daysInMonth) {
+      date = new Date(year, month + 1, i - firstDayIndex - daysInMonth + 1);
+      isMuted = true;
+    } else {
+      date = new Date(year, month, i - firstDayIndex + 1);
+    }
+
+    const key = toDateKey(date);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `mini-cal-day${isMuted ? ' muted' : ''}${key === todayKey() ? ' today' : ''}${key === selectedTaskDateKey ? ' selected' : ''}`;
+    btn.textContent = date.getDate();
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setSelectedModalDate(key);
+      if ($('#miniCalendarPopover')) $('#miniCalendarPopover').classList.add('hidden');
+      renderMiniCalendar();
+    });
+
+    grid.appendChild(btn);
+  }
+}
+
+function syncTimeSelectsFrom24h(time24) {
+  let h = 12, min = '00', ampm = 'AM';
+  if (time24 && time24.includes(':')) {
+    const [h24, m24] = time24.split(':').map(Number);
+    ampm = h24 >= 12 ? 'PM' : 'AM';
+    h = h24 % 12;
+    if (h === 0) h = 12;
+    min = String(m24).padStart(2, '0');
+  } else {
+    const now = new Date();
+    let curH = now.getHours();
+    ampm = curH >= 12 ? 'PM' : 'AM';
+    h = curH % 12;
+    if (h === 0) h = 12;
+    min = String(now.getMinutes()).padStart(2, '0');
+  }
+
+  const hStr = String(h).padStart(2, '0');
+  if ($('#taskTimeHour')) $('#taskTimeHour').value = hStr;
+  if ($('#taskTimeMinute')) $('#taskTimeMinute').value = min;
+  if ($('#taskTimeAmpm')) $('#taskTimeAmpm').value = ampm;
+
+  updateTimeHiddenInput();
+}
+
+function updateTimeHiddenInput() {
+  const hSel = $('#taskTimeHour') ? $('#taskTimeHour').value : '12';
+  const mSel = $('#taskTimeMinute') ? $('#taskTimeMinute').value : '00';
+  const ampmSel = $('#taskTimeAmpm') ? $('#taskTimeAmpm').value : 'AM';
+
+  let h24 = parseInt(hSel, 10);
+  if (ampmSel === 'PM' && h24 < 12) h24 += 12;
+  if (ampmSel === 'AM' && h24 === 12) h24 = 0;
+
+  const time24 = `${String(h24).padStart(2, '0')}:${mSel}`;
+  if ($('#taskTime')) $('#taskTime').value = time24;
+}
+
+function updateModalDeadlineFields(show) {
+  const fields = $('#modalDeadlineFields');
+  const toggleBtn = $('#modalDeadlineToggle');
+  if (fields) fields.classList.toggle('hidden', !show);
+  if (toggleBtn) toggleBtn.textContent = show ? '🗓 Remove deadline' : '🗓 + Add deadline date & time';
+}
+
+function openDialog(date = '', initialTitle = '', expandDeadline = false) {
   const form = $('#taskForm');
   if (form) form.reset();
-  if ($('#taskDate')) $('#taskDate').value = date || todayKey();
+  if (initialTitle && $('#taskTitle')) $('#taskTitle').value = initialTitle;
+  setSelectedModalDate(date || todayKey());
+  syncTimeSelectsFrom24h('');
+  updateModalDeadlineFields(expandDeadline);
   const dialog = $('#taskDialog');
   if (dialog && typeof dialog.showModal === 'function') {
     dialog.showModal();
-    setTimeout(() => { if ($('#taskTitle')) $('#taskTitle').focus(); }, 80);
+    setTimeout(() => {
+      if ($('#taskTitle')) {
+        $('#taskTitle').focus();
+        if (initialTitle) {
+          const len = $('#taskTitle').value.length;
+          $('#taskTitle').setSelectionRange(len, len);
+        }
+      }
+    }, 80);
   }
 }
 
@@ -370,8 +546,8 @@ function closeDialog() {
   if (dialog && typeof dialog.close === 'function') dialog.close();
 }
 
-const ALL_THEMES = ['midnight', 'emerald', 'cherry', 'ocean', 'autumn', 'rose', 'sage', 'linen'];
-const ALL_FONTS = ['caveat', 'zeyada', 'abel', 'creative', 'classic'];
+const ALL_THEMES = ['midnight', 'emerald', 'cherry', 'ocean', 'autumn', 'rose', 'moss', 'mocha'];
+const ALL_FONTS = ['caveat', 'rajdhani', 'abel', 'quicksand', 'creative', 'classic'];
 
 function applyTheme(theme) {
   ALL_THEMES.forEach(t => document.body.classList.remove(`theme-${t}`));
@@ -380,7 +556,7 @@ function applyTheme(theme) {
 
 function applyFont(font) {
   ALL_FONTS.forEach(f => document.body.classList.remove(`font-${f}`));
-  document.body.classList.add(`font-${font || 'zeyada'}`);
+  document.body.classList.add(`font-${font || 'rajdhani'}`);
 }
 
 function renderInspiration() {
@@ -422,7 +598,7 @@ function setPreview(image) {
 
 function openSettings() {
   draftTheme = settings.theme;
-  draftFont = settings.fontStyle || 'zeyada';
+  draftFont = settings.fontStyle || 'rajdhani';
   draftImage = settings.inspirationImage || '';
   if ($('#inspirationText')) $('#inspirationText').value = settings.inspirationText || '';
   if ($('#inspirationUpload')) $('#inspirationUpload').value = '';
@@ -488,7 +664,7 @@ async function init() {
   tasks = data[STORAGE_KEY] || [];
   settings = { ...settings, ...(data[SETTINGS_KEY] || {}) };
   if (!ALL_THEMES.includes(settings.theme)) settings.theme = 'midnight';
-  if (!ALL_FONTS.includes(settings.fontStyle)) settings.fontStyle = 'zeyada';
+  if (!ALL_FONTS.includes(settings.fontStyle)) settings.fontStyle = 'rajdhani';
   applyTheme(settings.theme);
   applyFont(settings.fontStyle);
 
@@ -504,33 +680,22 @@ async function init() {
 
   const heroQuickAdd = $('#heroQuickAdd');
   if (heroQuickAdd) {
-    heroQuickAdd.addEventListener('submit', async (e) => {
+    heroQuickAdd.addEventListener('submit', (e) => {
       e.preventDefault();
       const input = $('#heroTaskInput');
-      if (!input) return;
-      const title = input.value.trim();
-      if (!title) return;
-      const newTask = {
-        id: generateId(),
-        title,
-        date: '',
-        time: '',
-        priority: 'medium',
-        repeat: 'none',
-        focus: false,
-        completed: false,
-        createdAt: Date.now(),
-        completedAt: null
-      };
-      tasks.push(newTask);
-      input.value = '';
-      await persist();
+      const title = input ? input.value.trim() : '';
+      openDialog('', title, false);
     });
   }
 
-  if ($('#openTaskModal')) $('#openTaskModal').addEventListener('click', () => openDialog());
-  if ($('#heroOpenModal')) $('#heroOpenModal').addEventListener('click', () => openDialog());
-  if ($('#emptyAdd')) $('#emptyAdd').addEventListener('click', () => openDialog());
+  if ($('#modalDeadlineToggle')) {
+    $('#modalDeadlineToggle').addEventListener('click', () => {
+      const isHidden = $('#modalDeadlineFields') ? $('#modalDeadlineFields').classList.contains('hidden') : true;
+      updateModalDeadlineFields(isHidden);
+    });
+  }
+
+  if ($('#openTaskModal')) $('#openTaskModal').addEventListener('click', () => openDialog('', '', false));
   if ($('#closeTaskModal')) $('#closeTaskModal').addEventListener('click', closeDialog);
   if ($('#cancelTask')) $('#cancelTask').addEventListener('click', closeDialog);
 
@@ -539,13 +704,14 @@ async function init() {
     taskForm.addEventListener('submit', async event => {
       event.preventDefault();
       const fd = new FormData(event.currentTarget);
+      const hasDeadline = $('#modalDeadlineFields') && !$('#modalDeadlineFields').classList.contains('hidden');
       const newTask = {
         id: generateId(),
         title: fd.get('title').trim(),
-        date: fd.get('date') || '',
-        time: fd.get('time') || '',
-        priority: fd.get('priority'),
-        repeat: fd.get('repeat'),
+        date: hasDeadline ? (fd.get('date') || '') : '',
+        time: hasDeadline ? (fd.get('time') || '') : '',
+        priority: fd.get('priority') || 'medium',
+        repeat: fd.get('repeat') || 'none',
         focus: fd.get('focus') === 'on',
         completed: false,
         createdAt: Date.now(),
@@ -554,6 +720,7 @@ async function init() {
       if (!newTask.title) return;
       if (newTask.focus) tasks = tasks.map(t => ({...t, focus: false}));
       tasks.push(newTask);
+      if ($('#heroTaskInput')) $('#heroTaskInput').value = '';
       closeDialog();
       await persist();
     });
@@ -710,7 +877,142 @@ async function init() {
     });
   }
 
+  if ($('#webTestNotification')) {
+    $('#webTestNotification').addEventListener('click', () => {
+      const statusEl = $('#webNotificationStatus');
+      showClarityToast('Complete project proposal', '🔴 Past the deadline', true);
+      if (statusEl) statusEl.textContent = 'Notification toast displayed!';
+    });
+  }
+
+  if ($('#datePickerBtn')) {
+    $('#datePickerBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const popover = $('#miniCalendarPopover');
+      if (popover) {
+        popover.classList.toggle('hidden');
+        if (!popover.classList.contains('hidden')) {
+          const dateVal = $('#taskDate') ? $('#taskDate').value : todayKey();
+          const [y, m] = (dateVal || todayKey()).split('-').map(Number);
+          miniCalCursor = new Date(y, m - 1, 1);
+          renderMiniCalendar();
+        }
+      }
+    });
+  }
+
+  if ($('#miniCalPrev')) {
+    $('#miniCalPrev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      miniCalCursor.setMonth(miniCalCursor.getMonth() - 1);
+      renderMiniCalendar();
+    });
+  }
+
+  if ($('#miniCalNext')) {
+    $('#miniCalNext').addEventListener('click', (e) => {
+      e.stopPropagation();
+      miniCalCursor.setMonth(miniCalCursor.getMonth() + 1);
+      renderMiniCalendar();
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const wrapper = document.querySelector('.custom-date-picker-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+      if ($('#miniCalendarPopover')) $('#miniCalendarPopover').classList.add('hidden');
+    }
+  });
+
+  ['#taskTimeHour', '#taskTimeMinute', '#taskTimeAmpm'].forEach(selId => {
+    if ($(selId)) $(selId).addEventListener('change', updateTimeHiddenInput);
+  });
+
   render();
+  setInterval(checkAppNotifications, 15000);
+}
+
+const firedAppNotifications = new Set();
+
+function getCurrent12HourTime() {
+  const now = new Date();
+  let hours = now.getHours();
+  const mins = now.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+  const formattedMins = String(mins).padStart(2, '0');
+  return `${hours}:${formattedMins} ${ampm}`;
+}
+
+function showClarityToast(taskTitle, statusMessage, isUrgent = false) {
+  const container = $('#toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'clarity-toast';
+  const currentTime = getCurrent12HourTime();
+
+  toast.innerHTML = `
+    <div class="toast-top-row">
+      <span class="toast-brand-tag">Clarity — Gentle Task Planner</span>
+      <span class="toast-time-tag">${currentTime}</span>
+      <button class="toast-close-btn" aria-label="Dismiss notification" type="button">×</button>
+    </div>
+    <div class="toast-content-body">
+      <div class="toast-task-title"></div>
+      <div class="toast-status-msg ${isUrgent ? 'status-urgent' : ''}"></div>
+    </div>
+  `;
+
+  toast.querySelector('.toast-task-title').textContent = taskTitle;
+  toast.querySelector('.toast-status-msg').textContent = statusMessage;
+
+  const closeBtn = toast.querySelector('.toast-close-btn');
+  const dismiss = () => {
+    toast.classList.add('toast-hiding');
+    setTimeout(() => toast.remove(), 250);
+  };
+  closeBtn.addEventListener('click', dismiss);
+
+  container.appendChild(toast);
+  setTimeout(dismiss, 10000); // 10 seconds duration
+}
+
+function checkAppNotifications() {
+  const now = Date.now();
+  
+  tasks.filter(t => !t.completed && t.date && t.time).forEach(task => {
+    const [y, m, d] = task.date.split('-').map(Number);
+    const [h, min] = task.time.split(':').map(Number);
+    const deadline = new Date(y, m - 1, d, h, min).getTime();
+    const diff = deadline - now;
+    
+    // 1 hour before deadline
+    if (diff > 59 * 60 * 1000 && diff <= 60 * 60 * 1000) {
+      const tag = `${task.id}-60`;
+      if (!firedAppNotifications.has(tag)) {
+        firedAppNotifications.add(tag);
+        showClarityToast(task.title, '⏳ 1 hour remaining till deadline', false);
+      }
+    }
+    // 10 minutes before deadline
+    else if (diff > 9 * 60 * 1000 && diff <= 10 * 60 * 1000) {
+      const tag = `${task.id}-10`;
+      if (!firedAppNotifications.has(tag)) {
+        firedAppNotifications.add(tag);
+        showClarityToast(task.title, '⚠️ 10 minutes remaining till deadline', true);
+      }
+    }
+    // Past deadline
+    else if (diff <= 0 && diff >= -120 * 1000) {
+      const tag = `${task.id}-passed`;
+      if (!firedAppNotifications.has(tag)) {
+        firedAppNotifications.add(tag);
+        showClarityToast(task.title, '🔴 Past the deadline', true);
+      }
+    }
+  });
 }
 
 init();

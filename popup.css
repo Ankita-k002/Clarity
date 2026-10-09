@@ -32,11 +32,11 @@ body.theme-emerald {
 body.theme-cherry {
   --paper: #14070a;
   --ink: #ffebef;
-  --muted: #d4959f;
-  --line: #441820;
-  --sage: #2a0e13;
-  --sage-dark: #f87171;
-  --card: #1d0a0e;
+  --muted: #c27a84;
+  --line: #450d17;
+  --sage: #380b13;
+  --sage-dark: #b8232c;
+  --card: #22090f;
 }
 body.theme-ocean {
   --paper: #061019;
@@ -65,22 +65,22 @@ body.theme-rose {
   --sage-dark: #ec4899;
   --card: #ffffff;
 }
-body.theme-sage {
-  --paper: #f3f8f5;
-  --ink: #12291d;
-  --muted: #597a6a;
-  --line: #cbe3d4;
-  --sage: #e2f2e7;
-  --sage-dark: #10b981;
+body.theme-moss {
+  --paper: #f1f5e1;
+  --ink: #424a34;
+  --muted: #87953c;
+  --line: #d4df90;
+  --sage: #d4df90;
+  --sage-dark: #87953c;
   --card: #ffffff;
 }
-body.theme-linen {
-  --paper: #f9f7f2;
-  --ink: #26221c;
-  --muted: #797164;
-  --line: #e5decb;
-  --sage: #f0e9d9;
-  --sage-dark: #b45309;
+body.theme-mocha {
+  --paper: #f4ece6;
+  --ink: #553d39;
+  --muted: #a58077;
+  --line: #cab8b1;
+  --sage: #cab8b1;
+  --sage-dark: #a58077;
   --card: #ffffff;
 }
 
